@@ -3,6 +3,6 @@ var router = express.Router();
 var keysController = require('../controllers/keysController')
 
 /* GET users listing. */
-router.get('/', keysController.register);
+router.post('/', keysController.register);
 
 module.exports = router;
