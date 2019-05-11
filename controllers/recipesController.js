@@ -10,7 +10,7 @@ const create = async (req, res) => {
         key: req.body.key
       }
     });
-    eval(pry.it)
+
     if (key) {
       const response = await fetch(`https://api.edamam.com/search?q=${req.body.ingredient}&app_id=${process.env.RECIPE_ID}&app_key=${process.env.RECIPE_KEY}&from=0&to=10`);
       const data = await response.json();
