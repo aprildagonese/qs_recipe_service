@@ -48,7 +48,7 @@ const index = async (req, res) => {
     const ingredient = sanitizeEntry(query.ingredient)
     const recipes = await Recipe.findAll({where: {ingredient: ingredient}, limit: 10})
     res.setHeader("Content-Type", "application/json");
-    res.status(200).send(JSON.stringify({ingredient: `${query.ingredient}`, recipes: recipes}))
+    res.status(200).send(JSON.stringify({ingredient: `${ingredient}`, recipes: recipes}))
   } catch (error) {
     res.setHeader("Content-Type", "application/json");
     res.status(404).send({error})
