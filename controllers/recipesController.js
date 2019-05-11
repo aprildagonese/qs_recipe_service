@@ -7,18 +7,17 @@ const create = async (req, res) => {
   try {
     const key = await Key.findOne({
       where: {
-        key: req.body.key
+        key: req.query.key
       }
     });
-    eval(pry.it)
     if (key) {
-      const response = await fetch(`https://api.edamam.com/search?q=${req.body.ingredient}&app_id=${process.env.RECIPE_ID}&app_key=${process.env.RECIPE_KEY}&from=0&to=10`);
+      const response = await fetch(`https://api.edamam.com/search?q=${req.query.ingredient}&app_id=${process.env.RECIPE_ID}&app_key=${process.env.RECIPE_KEY}&from=0&to=10`);
       const data = await response.json();
 
       let recipes = await data.hits.map(recipe => {
         const newRecipe = Recipe.findOrCreate({
           where: {
-            ingredient: req.body.ingredient,
+            ingredient: req.query.ingredient,
             label: recipe.recipe.label,
             recipe_url: recipe.recipe.shareAs,
             health_labels: JSON.stringify(recipe.recipe.healthLabels),
@@ -30,7 +29,7 @@ const create = async (req, res) => {
       });
     };
     res.setHeader("Content-Type", "application/json");
-    res.status(204).send();
+    res.status(201).send();
   } catch (error) {
     res.setHeader("Content-Type", "application/json");
     res.status(401).send({error});
