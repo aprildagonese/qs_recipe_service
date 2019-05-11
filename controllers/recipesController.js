@@ -37,6 +37,25 @@ const create = async (req, res) => {
   }
 }
 
+const index = async (req, res) => {
+  try {
+    const ingredient = sanitizeEntry(req.body.ingredient)
+    const recipes = await Recipe.findAll({where: {ingredient: ingredient}, limit: 10})
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).send(JSON.stringify({ingredient: `${req.body.ingredient}`, recipes: recipes}))
+  } catch (error) {
+    res.setHeader("Content-Type", "application/json");
+    res.status(404).send({error})
+  }
+}
+
+const sanitizeEntry = (userEntry) => {
+  let entry = userEntry
+  entry = entry.toLowerCase()
+  entry = entry[0].toUpperCase() + entry.substring(1)
+  return entry
+}
+
 module.exports = {
-  create
+  create,index
 }
