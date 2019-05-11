@@ -2,23 +2,26 @@ const Recipe = require('../models').Recipe
 const Key = require('../models').Key
 const pry = require('pryjs');
 const fetch = require('node-fetch');
+var url = require('url');
 
 const create = async (req, res) => {
+  var url_parts = url.parse(req.url, true);
+  var query = url_parts.query;
   try {
     const key = await Key.findOne({
       where: {
-        key: req.body.key
+        key: query.key
       }
     });
 
     if (key) {
-      const response = await fetch(`https://api.edamam.com/search?q=${req.body.ingredient}&app_id=${process.env.RECIPE_ID}&app_key=${process.env.RECIPE_KEY}&from=0&to=10`);
+      const response = await fetch(`https://api.edamam.com/search?q=${query.ingredient}&app_id=${process.env.RECIPE_ID}&app_key=${process.env.RECIPE_KEY}&from=0&to=10`);
       const data = await response.json();
 
       let recipes = await data.hits.map(recipe => {
         const newRecipe = Recipe.findOrCreate({
           where: {
-            ingredient: req.body.ingredient,
+            ingredient: query.ingredient,
             label: recipe.recipe.label,
             recipe_url: recipe.recipe.shareAs,
             health_labels: JSON.stringify(recipe.recipe.healthLabels),
@@ -38,11 +41,14 @@ const create = async (req, res) => {
 }
 
 const index = async (req, res) => {
+  var url_parts = url.parse(req.url, true);
+  var query = url_parts.query;
+
   try {
-    const ingredient = sanitizeEntry(req.body.ingredient)
+    const ingredient = sanitizeEntry(query.ingredient)
     const recipes = await Recipe.findAll({where: {ingredient: ingredient}, limit: 10})
     res.setHeader("Content-Type", "application/json");
-    res.status(200).send(JSON.stringify({ingredient: `${req.body.ingredient}`, recipes: recipes}))
+    res.status(200).send(JSON.stringify({ingredient: `${query.ingredient}`, recipes: recipes}))
   } catch (error) {
     res.setHeader("Content-Type", "application/json");
     res.status(404).send({error})
