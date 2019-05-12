@@ -101,6 +101,29 @@ const time = async (req, res) => {
   }
 }
 
+const ingredCount = async (req, res) => {
+  try {
+    const ingredient = sanitizeEntry(req.query.ingredient);
+    const recipes = await Recipe.findAll({
+      where: {
+        ingredient: ingredient
+      },
+      order: [['ingred_count', 'ASC']],
+      limit: 10
+    });
+    const avgCal = avgCalories(recipes);
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).send(JSON.stringify({
+      ingredient: `${ingredient}`,
+      avg_calories: avgCal,
+      recipes: recipes
+    }));
+  } catch (error) {
+    res.setHeader("Content-Type", "application/json");
+    res.status(404).send({error});
+  }
+}
+
 const avgCalories = (recipeList) => {
   let avg = 0
   recipeList.map(recipe => {
@@ -117,5 +140,5 @@ const sanitizeEntry = (userEntry) => {
 }
 
 module.exports = {
-  create, index, calories, time
+  create, index, calories, time, ingredCount
 }
