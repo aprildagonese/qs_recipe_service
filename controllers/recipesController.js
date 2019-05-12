@@ -5,8 +5,6 @@ const fetch = require('node-fetch');
 var url = require('url');
 
 const create = async (req, res) => {
-  var url_parts = url.parse(req.url, true);
-  var query = url_parts.query;
   try {
     const key = await Key.findOne({
       where: {
@@ -40,18 +38,51 @@ const create = async (req, res) => {
 }
 
 const index = async (req, res) => {
-  var url_parts = url.parse(req.url, true);
-  var query = url_parts.query;
-
   try {
-    const ingredient = sanitizeEntry(query.ingredient)
+    const ingredient = sanitizeEntry(req.query.ingredient)
     const recipes = await Recipe.findAll({where: {ingredient: ingredient}, limit: 10})
+    const avgCal = avgCalories(recipes);
     res.setHeader("Content-Type", "application/json");
-    res.status(200).send(JSON.stringify({ingredient: `${ingredient}`, recipes: recipes}))
+    res.status(200).send(JSON.stringify({
+      ingredient: `${ingredient}`,
+      avg_calories: avgCal,
+      recipes: recipes
+    }));
   } catch (error) {
     res.setHeader("Content-Type", "application/json");
-    res.status(404).send({error})
+    res.status(404).send({error});
   }
+}
+
+const calories = async (req, res) => {
+  try {
+    const ingredient = sanitizeEntry(req.query.ingredient)
+    const recipes = await Recipe.findAll({
+      where: {
+        ingredient: ingredient
+      },
+      order: [['calories', 'ASC']],
+      limit: 10
+    });
+    const avgCal = avgCalories(recipes);
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).send(JSON.stringify({
+      ingredient: `${ingredient}`,
+      avg_calories: avgCal,
+      recipes: recipes
+    }));
+  } catch (error) {
+    res.setHeader("Content-Type", "application/json");
+    res.status(404).send({error});
+  }
+}
+
+const avgCalories = (recipeList) => {
+  let avg = 0
+  recipeList.map(recipe => {
+    avg += recipe.calories
+  });
+  return avg / recipeList.length
 }
 
 const sanitizeEntry = (userEntry) => {
@@ -62,5 +93,5 @@ const sanitizeEntry = (userEntry) => {
 }
 
 module.exports = {
-  create,index
+  create, index, calories
 }
