@@ -38,8 +38,6 @@ const create = async (req, res) => {
 }
 
 const index = async (req, res) => {
-  // var url_parts = url.parse(req.url, true);
-  // var query = url_parts.query;
   try {
     const ingredient = sanitizeEntry(req.query.ingredient)
     const recipes = await Recipe.findAll({where: {ingredient: ingredient}, limit: 10})
