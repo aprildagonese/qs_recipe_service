@@ -5,8 +5,6 @@ const fetch = require('node-fetch');
 var url = require('url');
 
 const create = async (req, res) => {
-  // var url_parts = url.parse(req.url, true);
-  // var query = url_parts.query;
   try {
     const key = await Key.findOne({
       where: {
