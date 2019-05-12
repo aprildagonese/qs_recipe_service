@@ -4,7 +4,6 @@ var bodyParser = require('body-parser');
 var express = require('express');
 var test = express()
 var app = require('../app.js');
-// var clear = require('../specHelper')
 const Recipe = require('../models').Recipe
 const Key = require('../models').Key
 
