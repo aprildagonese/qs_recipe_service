@@ -12,13 +12,14 @@ const create = async (req, res) => {
       }
     });
     if (key) {
-      const response = await fetch(`https://api.edamam.com/search?q=${req.query.ingredient}&app_id=${process.env.RECIPE_ID}&app_key=${process.env.RECIPE_KEY}&from=0&to=10`);
+      const ingredient = sanitizeEntry(req.query.ingredient);
+      const response = await fetch(`https://api.edamam.com/search?q=${ingredient}&app_id=${process.env.RECIPE_ID}&app_key=${process.env.RECIPE_KEY}&from=0&to=10`);
       const data = await response.json();
 
       let recipes = await data.hits.map(recipe => {
         const newRecipe = Recipe.findOrCreate({
           where: {
-            ingredient: req.query.ingredient,
+            ingredient: ingredient,
             label: recipe.recipe.label,
             recipe_url: recipe.recipe.shareAs,
             health_labels: JSON.stringify(recipe.recipe.healthLabels),
@@ -39,7 +40,7 @@ const create = async (req, res) => {
 
 const index = async (req, res) => {
   try {
-    const ingredient = sanitizeEntry(req.query.ingredient)
+    const ingredient = sanitizeEntry(req.query.ingredient);
     const recipes = await Recipe.findAll({where: {ingredient: ingredient}, limit: 10})
     const avgCal = avgCalories(recipes);
     res.setHeader("Content-Type", "application/json");
@@ -56,12 +57,35 @@ const index = async (req, res) => {
 
 const calories = async (req, res) => {
   try {
-    const ingredient = sanitizeEntry(req.query.ingredient)
+    const ingredient = sanitizeEntry(req.query.ingredient);
     const recipes = await Recipe.findAll({
       where: {
         ingredient: ingredient
       },
       order: [['calories', 'ASC']],
+      limit: 10
+    });
+    const avgCal = avgCalories(recipes);
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).send(JSON.stringify({
+      ingredient: `${ingredient}`,
+      avg_calories: avgCal,
+      recipes: recipes
+    }));
+  } catch (error) {
+    res.setHeader("Content-Type", "application/json");
+    res.status(404).send({error});
+  }
+}
+
+const time = async (req, res) => {
+  try {
+    const ingredient = sanitizeEntry(req.query.ingredient);
+    const recipes = await Recipe.findAll({
+      where: {
+        ingredient: ingredient
+      },
+      order: [['prep_time', 'ASC']],
       limit: 10
     });
     const avgCal = avgCalories(recipes);
@@ -93,5 +117,5 @@ const sanitizeEntry = (userEntry) => {
 }
 
 module.exports = {
-  create, index, calories
+  create, index, calories, time
 }
