@@ -2,8 +2,11 @@ const Recipe = require('../models').Recipe
 const Key = require('../models').Key
 const pry = require('pryjs');
 const fetch = require('node-fetch');
+var url = require('url');
 
 const create = async (req, res) => {
+  var url_parts = url.parse(req.url, true);
+  var query = url_parts.query;
   try {
     const key = await Key.findOne({
       where: {
@@ -36,6 +39,28 @@ const create = async (req, res) => {
   }
 }
 
+const index = async (req, res) => {
+  var url_parts = url.parse(req.url, true);
+  var query = url_parts.query;
+
+  try {
+    const ingredient = sanitizeEntry(query.ingredient)
+    const recipes = await Recipe.findAll({where: {ingredient: ingredient}, limit: 10})
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).send(JSON.stringify({ingredient: `${ingredient}`, recipes: recipes}))
+  } catch (error) {
+    res.setHeader("Content-Type", "application/json");
+    res.status(404).send({error})
+  }
+}
+
+const sanitizeEntry = (userEntry) => {
+  let entry = userEntry
+  entry = entry.toLowerCase()
+  entry = entry[0].toUpperCase() + entry.substring(1)
+  return entry
+}
+
 module.exports = {
-  create
+  create,index
 }
