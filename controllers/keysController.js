@@ -3,7 +3,7 @@ const hat = require('hat')
 const pry = require('pryjs')
 
 const register = (req, res) => {
-  const email = req.body.email
+  const email = req.query.email
   if (email) {
     generateKey(email, res)
   } else {
