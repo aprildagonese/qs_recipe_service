@@ -2,7 +2,7 @@
 
 A microservice built as a housing for recipes by ingredient for a project at [Turing School of Software & Design](turing.io). The project, sharing the same name, was an exercise in SOA requiring use of Node and Express. Users are able to log a food which the database will use to retrieve recipes for.
 
-Along with the code found in this repository, the application, [Quantified Self](https://quantifiedselfapp.herokuapp.com), utilizes another Express.js [service](https://github.com/PeregrineReed/quantified-self) for account info and user login/logout to users and a React [frontend](https://github.com/aprildagonese/qs_frontend) for UI/UX.
+Along with the code found in this repository, the application, [Quantified Self](https://quantifiedselfapp.herokuapp.com), utilizes another Express.js [service](https://github.com/PeregrineReed/quantified-self) for account info and user login/logout and a React [frontend](https://github.com/aprildagonese/qs_frontend) for UI/UX.
 
 ### Versions
 * npm - 6.9.0
