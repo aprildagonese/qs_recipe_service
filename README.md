@@ -19,12 +19,6 @@ Run the following commands in your terminal:
 $ npm install
 $ npx sequelize db:create
 $ npx sequelize db:migrate
-$ touch .env
-```
-In the newly created .env file add a key for the recipes service
-instructions for that service can be found [here](https://github.com/aprildagonese/qs_recipe_service).
-```
-RECIPE_KEY=<YOUR RECIPE KEY>
 ```
 
 ## API Endpoints
