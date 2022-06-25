@@ -14,7 +14,7 @@
     "express": "~4.16.0",
     "hat": "0.0.3",
     "morgan": "~1.9.0",
-    "node-fetch": "^2.5.0",
+    "node-fetch": "^2.6.7",
     "pg": "^7.10.0",
     "pryjs": "^1.0.3",
     "sequelize": "^5.8.5",
